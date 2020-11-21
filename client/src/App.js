@@ -1,25 +1,74 @@
-import React from "react";
+import {
+  AppBar,
+  Drawer,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemText,
+  Toolbar,
+} from "@material-ui/core";
+import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
+import KitchenOutlinedIcon from "@material-ui/icons/KitchenOutlined";
+import React, { useState } from "react";
 import { Route, Switch, useHistory } from "react-router-dom";
 
-import { useAppHooks } from "./components/containers/AppContainer/AppHooks";
-import FoodContainer from "./components/containers/FoodContainer/FoodContainer";
-import Home from "./components/Home/Home";
+import { useAppHooks } from "./AppHooks";
+import FoodContainer from "./components/containers/Food/FoodContainer";
+import HomeContainer from "./components/containers/Home/HomeContainer";
 
 const App = () => {
-  const { state } = useAppHooks();
+  const { login, logout, setProfile, state } = useAppHooks();
   const history = useHistory();
-  return (
-    <>
-      <button onClick={() => history.push("/exercises")}>Exercises</button>
-      <button onClick={() => history.push("/food")}>Food</button>
-      <button onClick={() => history.push("/")}>Home</button>
+  const [isDrawerOpen, setIsDrawerOpen] = useState(false);
 
-      <pre>{JSON.stringify({ state }, null, 2)}</pre>
+  const handleDrawer = (drawerState) => setIsDrawerOpen(() => drawerState);
+
+  const handleLogin = () => login("Sasha");
+
+  const handleLogout = () => logout();
+
+  const handleNavClick = (path) => {
+    history.push(`/${path}`);
+    handleDrawer(false);
+  };
+
+  const handleSetProfile = () => setProfile("TEST");
+
+  return (
+    <div>
+      <AppBar position="static">
+        <Toolbar>Hello</Toolbar>
+      </AppBar>
       <Switch>
         <Route component={FoodContainer} path="/food" />
-        <Route component={Home} path="/" />
+        <Route component={HomeContainer} path="/" />
       </Switch>
-    </>
+      <pre>{JSON.stringify({ state }, null, 2)}</pre>
+      <button onClick={handleLogin}>LOGIN</button>
+      <button onClick={handleLogout}>LOGOUT</button>
+      <button onClick={handleSetProfile}>SET TEST PROFILE</button>
+      <button onClick={() => handleDrawer(true)}>OPEN DRAWER</button>
+      <Drawer
+        anchor="left"
+        onClose={() => handleDrawer(false)}
+        open={isDrawerOpen}
+      >
+        <List>
+          <ListItem button onClick={() => handleNavClick("")}>
+            <ListItemIcon>
+              <HomeOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText>Home</ListItemText>
+          </ListItem>
+          <ListItem button onClick={() => handleNavClick("food")}>
+            <ListItemIcon>
+              <KitchenOutlinedIcon />
+            </ListItemIcon>
+            <ListItemText>Food</ListItemText>
+          </ListItem>
+        </List>
+      </Drawer>
+    </div>
   );
 };
 

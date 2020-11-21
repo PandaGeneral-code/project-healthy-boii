@@ -2,13 +2,13 @@ import { createContext, useMemo, useReducer } from "react";
 
 export const AppContext = createContext();
 
-const initialState = { profile: null };
+export const initialState = { profile: "default" };
 
-export const SET_PROFILE = "boii/app/SET_PROFILE";
+export const PROFILE_SET = "boii/app/PROFILE_SET";
 
 const appReducer = (state = initialState, { payload, type }) => {
   switch (type) {
-    case SET_PROFILE:
+    case PROFILE_SET:
       return { ...state, profile: payload.profile };
     default:
       return state;

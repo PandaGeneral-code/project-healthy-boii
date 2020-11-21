@@ -1,7 +1,7 @@
 import React from "react";
 
-import App from "../../../App";
-import AppContextProvider from "./AppState";
+import App from "./App";
+import AppContextProvider from "./AppContext";
 
 const AppContainer = () => (
   <AppContextProvider>
