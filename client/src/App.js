@@ -6,6 +6,7 @@ import {
   ListItemIcon,
   ListItemText,
   Toolbar,
+  Typography,
 } from "@material-ui/core";
 import HomeOutlinedIcon from "@material-ui/icons/HomeOutlined";
 import KitchenOutlinedIcon from "@material-ui/icons/KitchenOutlined";
