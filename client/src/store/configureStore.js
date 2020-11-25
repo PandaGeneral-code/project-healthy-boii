@@ -1,6 +1,7 @@
 import { createStore, combineReducers } from "redux";
 
-import appReducer from "./app";
+import appReducer from "./modules/app";
+import foodReducer from "./modules/food";
 
 export const createCleanStore = () =>
-  createStore(combineReducers({ app: appReducer }));
+  createStore(combineReducers({ app: appReducer, food: foodReducer }));
