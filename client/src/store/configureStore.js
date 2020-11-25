@@ -1,7 +1,2 @@
-import { createStore, combineReducers } from "redux";
-
-import appReducer from "./modules/app";
-import foodReducer from "./modules/food";
-
-export const createCleanStore = () =>
-  createStore(combineReducers({ app: appReducer, food: foodReducer }));
+import { combineReducers, createStore } from "redux";
+import utilsReducer from "./utils";
