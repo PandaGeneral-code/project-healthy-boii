@@ -14,15 +14,19 @@ import React from "react";
 import { useLocation } from "react-router-dom";
 
 import { AppBarHeading } from "./styled";
+import { useUtilsHooks } from "../../UtilsHooks";
 
 const AppBar = ({ availableContainers }) => {
   const { pathname } = useLocation();
+  const { setDrawerOpenState } = useUtilsHooks();
+
+  const handleOpenDrawer = () => setDrawerOpenState(true);
 
   return (
     <>
       <MUIAppBar color="primary" position="static">
         <Toolbar>
-          <IconButton color="inherit" edge="start">
+          <IconButton color="inherit" edge="start" onClick={handleOpenDrawer}>
             <MenuIcon />
           </IconButton>
           <AppBarHeading noWrap variant="h6">

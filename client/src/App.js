@@ -4,15 +4,23 @@ import { Route, Switch, useHistory, useLocation } from "react-router-dom";
 
 import AppBar from "./components/AppBar/AppBar";
 import Containers from "./components/containers/index";
+import Drawer from "./components/Drawer/Drawer";
 import RootWrapper from "./styled";
+
+import { useUtilsHooks } from "./UtilsHooks";
 
 const App = () => {
   const history = useHistory();
   const location = useLocation();
+  const {
+    state: { isDrawerOpen },
+  } = useUtilsHooks();
 
   return (
     <RootWrapper>
       <AppBar availableContainers={Containers} />
+      <Drawer availableContainers={Containers} />
+      <pre>{JSON.stringify({ isDrawerOpen }, null, 2)}</pre>
       {Containers.map(({ config: { path, title } }) => (
         <Button
           color="primary"
