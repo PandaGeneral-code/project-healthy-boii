@@ -9,97 +9,125 @@ import {
 } from "@material-ui/core";
 import ExpandLess from "@material-ui/icons/ExpandLess";
 import ExpandMore from "@material-ui/icons/ExpandMore";
-import InboxIcon from "@material-ui/icons/MoveToInbox";
 import React, { useEffect, useState } from "react";
 import { useHistory, useLocation, useRouteMatch } from "react-router-dom";
 
-import { DrawerContainer } from "./styled";
+import { PaddedListItem } from "./styled";
 import { useUtilsHooks } from "../../UtilsHooks";
 
 const Drawer = ({ availableContainers }) => {
   const history = useHistory();
-  const { pathname, url } = useLocation();
-  const route = useRouteMatch();
+  const location = useLocation();
   const [expandedContainer, setExpandedContainer] = useState(null);
+  const [selectedSub, setSelectedSub] = useState(null);
   const {
     setDrawerOpenState,
     state: { isDrawerOpen },
   } = useUtilsHooks();
 
-  const handleDrawerClose = () => setDrawerOpenState(false);
+  const handleDrawerClose = () => {
+    setDrawerOpenState(false);
+  };
 
-  const handleMainMenuItemClick = (path, subComponents) => {
+  const handleMainDrawerItemClick = (path, subComponents) => {
     history.push(`/${path}`);
     if (!subComponents) {
-      setDrawerOpenState(false);
+      handleDrawerClose();
+    }
+    if (path === "") {
+      if (expandedContainer === "home ") {
+        setExpandedContainer(() => "nothing");
+      } else {
+        setExpandedContainer(() => "home");
+      }
+    } else {
+      if (expandedContainer === path) {
+        setExpandedContainer(() => "nothing");
+      } else {
+        setExpandedContainer(() => path);
+      }
     }
   };
 
-  const handleSubMenuItemClick = (path) => {
-    history.push(`${pathname}/${path}`);
+  const handleMenuItemSubComponentClick = (parentContainerPath, path) => {
+    history.push(`/${parentContainerPath}/${path}`);
+    handleDrawerClose();
   };
 
   useEffect(() => {
-    const container = availableContainers.find(
-      (container) => container.config.path === pathname.split("/")[1]
-    ).config.title;
-    setExpandedContainer(() => container);
-  }, [availableContainers, pathname]);
+    const sub = location.pathname.split("/")[2];
+    const urlContainer = location.pathname.split("/")[1];
+    setExpandedContainer(() => (urlContainer ? urlContainer : "home"));
+    setSelectedSub(() => sub);
+  }, [location.pathname]);
 
   return (
     <MUIDrawer anchor="left" onClose={handleDrawerClose} open={isDrawerOpen}>
       {expandedContainer && (
-        <DrawerContainer>
-          <List
-            component="nav"
-            subheader={
-              <ListSubheader component="div">Select a Category</ListSubheader>
-            }
-          >
-            {availableContainers.map(
-              ({ config: { path, subComponents, title } }) => (
-                <>
-                  <ListItem
-                    button
-                    key={title}
-                    onClick={() => handleMainMenuItemClick(path, subComponents)}
-                    selected={pathname.split("/")[1] === path}
-                  >
-                    <ListItemIcon>
-                      <InboxIcon />
-                    </ListItemIcon>
-                    <ListItemText primary={title} />
-                    {subComponents && <ExpandMore />}
-                  </ListItem>
-                  {subComponents && (
-                    <Collapse
-                      in={expandedContainer === title}
-                      timeout="auto"
-                      unmountOnExit
-                    >
-                      <List component="div" disablePadding>
-                        {subComponents.map((sub) => (
-                          <ListItem
-                            button
-                            key={sub}
-                            onClick={() => handleSubMenuItemClick(sub)}
-                            selected={sub === pathname.split("/")[2]}
-                            style={{ paddingLeft: "40px" }}
-                          >
-                            <ListItemIcon>
-                              <InboxIcon />
-                            </ListItemIcon>
-                            <ListItemText primary={sub} />
-                          </ListItem>
-                        ))}
-                      </List>
-                    </Collapse>
-                  )}
-                </>
-              )
-            )}
-          </List>
-        </DrawerContainer>
+        <List
+          component="nav"
+          subheader={
+            <ListSubheader component="div">
+              Select a Category to View
+            </ListSubheader>
+          }
+        >
+          {availableContainers.map((container) => (
+            <>
+              <ListItem
+                button
+                key={container.config.path}
+                onClick={() =>
+                  handleMainDrawerItemClick(
+                    container.config.path,
+                    container.config.subComponents
+                  )
+                }
+                selected={expandedContainer === container.config.path}
+              >
+                <ListItemIcon>
+                  <container.config.icon />
+                </ListItemIcon>
+                <ListItemText
+                  key={container.config.path}
+                  primary={container.config.title}
+                />
+                {container.config.subComponents &&
+                  (expandedContainer ===
+                  container.config.title.toLowerCase() ? (
+                    <ExpandLess />
+                  ) : (
+                    <ExpandMore />
+                  ))}
+              </ListItem>
+              {container.config.subComponents &&
+                expandedContainer === container.config.title.toLowerCase() && (
+                  <Collapse in={true} timeout="auto" unmountOnExit>
+                    <List component="div" disablePadding>
+                      {container.config.subComponents.map((sub) => (
+                        <PaddedListItem
+                          button
+                          key={sub}
+                          onClick={() =>
+                            handleMenuItemSubComponentClick(
+                              container.config.path,
+                              sub.path
+                            )
+                          }
+                          selected={selectedSub === sub.path}
+                        >
+                          <ListItemIcon>
+                            <ExpandMore />
+                          </ListItemIcon>
+                          <ListItemText primary={sub.title} />
+                        </PaddedListItem>
+                      ))}
+                    </List>
+                  </Collapse>
+                )}
+            </>
+          ))}
+        </List>
       )}
     </MUIDrawer>
   );
