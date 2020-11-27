@@ -1,8 +1,7 @@
 import React from "react";
 import ReactDOM from "react-dom";
+import { Provider as ReduxProvider } from "react-redux";
 import { BrowserRouter as Router } from "react-router-dom";
-import { Provider } from "react-redux";
-import { ThemeProvider } from "styled-components";
 
 import App from "./App";
 import GlobalStyle from "./components/GlobalStyle/GlobalStyle";
@@ -10,14 +9,12 @@ import { createCleanStore } from "./store/configureStore";
 
 ReactDOM.render(
   <React.StrictMode>
-    <Provider store={createCleanStore()}>
+    <ReduxProvider store={createCleanStore()}>
       <Router>
-        <ThemeProvider theme={{}}>
-          <GlobalStyle />
-          <App />
-        </ThemeProvider>
+        <GlobalStyle />
+        <App />
       </Router>
-    </Provider>
+    </ReduxProvider>
   </React.StrictMode>,
   document.getElementById("root")
 );
